@@ -1,4 +1,5 @@
 altair==5.5.0
+anyio==4.12.0
 asttokens @ file:///home/conda/feedstock_root/build_artifacts/asttokens_1763409923949/work
 attrs==25.4.0
 bayesian-optimization==3.2.0
@@ -18,11 +19,18 @@ et_xmlfile==2.0.0
 exceptiongroup @ file:///home/conda/feedstock_root/build_artifacts/exceptiongroup_1763918002538/work
 executing @ file:///home/conda/feedstock_root/build_artifacts/executing_1756729339227/work
 fastjsonschema==2.21.2
+filelock==3.20.2
 fonttools==4.61.0
+fsspec==2025.12.0
 gitdb==4.0.12
 GitPython==3.1.45
 graphviz==0.21
+h11==0.16.0
 hdbscan==0.8.40
+hf-xet==1.2.0
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==1.2.3
 idna==3.11
 imbalanced-learn==0.14.1
 importlib_metadata @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_importlib-metadata_1747934053/work
@@ -67,6 +75,7 @@ pyparsing==3.2.5
 python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_python-dateutil_1751104122/work
 pytz==2025.2
 pywin32 @ file:///D:/bld/bld/rattler-build_pywin32_1756487147/work
+PyYAML==6.0.3
 pyzmq @ file:///D:/bld/bld/rattler-build_pyzmq_1757387021/work
 referencing==0.37.0
 requests==2.32.5
@@ -74,6 +83,7 @@ rpds-py==0.29.0
 scikit-learn==1.7.2
 scipy==1.15.3
 seaborn==0.13.2
+shellingham==1.5.4
 six @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_six_1753199211/work
 sklearn-compat==0.1.5
 smmap==5.0.2
@@ -85,7 +95,9 @@ tenacity==9.1.2
 threadpoolctl==3.6.0
 toml==0.10.2
 tornado @ file:///D:/bld/tornado_1762506734045/work
+tqdm==4.67.1
 traitlets @ file:///home/conda/feedstock_root/build_artifacts/traitlets_1733367359838/work
+typer-slim==0.21.0
 typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_typing_extensions_1756220668/work
 tzdata==2025.2
 urllib3==2.5.0
