@@ -35,7 +35,7 @@ def load_models():
 @st.cache_data
 def load_global_data():
     """Load and cache the global dataset"""
-    clustered_studentType_dataset = "C:/Users/Jia Xuan/Downloads/fyp-linked-github/fyp_Degree/data_with_cluster_type.xlsx"
+    clustered_studentType_dataset = "data_with_cluster_type.xlsx"
     return pd.read_excel(clustered_studentType_dataset)
 
 # -----------------------------
