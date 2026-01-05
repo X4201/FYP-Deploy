@@ -1,16 +1,23 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import joblib
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import io
-import time  # For debugging
+import time  
 
-# -----------------------------
-# 1. LOAD ALL ASSETS WITH CACHING
-# -----------------------------
+from huggingface_hub import hf_hub_download
+import joblib
+import streamlit as st
+
+
+repo_id = "SmartestBoy/burnout-classification"
+filename = "burnout_stacking_model.pkl"
+
+path = hf_hub_download(repo_id=repo_id, filename=filename)
+
+
 @st.cache_resource
 def load_models():
     """Load ML models once and cache"""
@@ -21,7 +28,7 @@ def load_models():
     cluster_model = joblib.load('best_clustering_model.pkl')
     cluster_scaler = joblib.load('cluster_scaler.pkl')
     cluster_features = joblib.load('cluster_features.pkl')
-    burnout_model = joblib.load('burnout_stacking_model.pkl')
+    burnout_model = joblib.load(path)
     burnout_le = joblib.load('burnout_label_encoder.pkl')
     return reg_model, imputer, scaler, model_cols, cluster_model, cluster_scaler, cluster_features, burnout_model, burnout_le
 
