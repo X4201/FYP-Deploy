@@ -68,6 +68,34 @@ def get_recommendation(prod, persona, burnout):
         return "⚠️ **Caution:** You are a high achiever but at risk. Implement Pomodoro (5min breaks)."
     return "✅ **Stable:** Your current patterns appear sustainable. Maintain your offline hours."
 
+PERSONA_HELP = {
+    "Zen Masters": {
+        "desc": "Calm, balanced, and mindful learners who value harmony over pressure.",
+        "tip": "Maintain flow-based work sessions, protect sleep, and avoid overloading yourself."
+    },
+    "Grinders": {
+        "desc": "Highly driven and disciplined achievers who push through long hours.",
+        "tip": "Introduce structured breaks and recovery days to prevent burnout."
+    },
+    "Overwhelmed": {
+        "desc": "Students facing high stress and cognitive overload.",
+        "tip": "Reduce workload, prioritize rest, and simplify task lists."
+    },
+    "Burnout Risk": {
+        "desc": "At critical risk of exhaustion and disengagement.",
+        "tip": "Immediate recovery focus: sleep, reduced hours, and professional support."
+    },
+    "Coasters": {
+        "desc": "Moderately engaged students who operate comfortably but inconsistently.",
+        "tip": "Introduce light structure and clear goals to boost momentum."
+    },
+    "Restless Sleepers": {
+        "desc": "Productive but sleep-deprived students with unstable routines.",
+        "tip": "Improve sleep hygiene and limit late-night screen exposure."
+    }
+}
+
+
 # -----------------------------
 # 4. SIDEBAR NAVIGATION (Keep outside pages)
 # -----------------------------
@@ -78,16 +106,45 @@ page = st.sidebar.selectbox("Navigate To", ["🏠 Home", "📊 Prediction & Anal
 # 5. PAGE: HOME (Lightweight)
 # -----------------------------
 if page == "🏠 Home":
-    st.title("Student Productivity & Burnout Analysis System")
-    st.markdown("### Integrating Machine Learning for Student Success")
-    st.image("https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800")
-    st.info("Use the sidebar to input your data or view the global dashboard.")
+    st.markdown("""
+    <div style="padding:30px; border-radius:16px; background: linear-gradient(135deg,#667eea,#764ba2); color:white;">
+        <h1>Student Productivity & Burnout Companion</h1>
+        <p style="font-size:18px;">
+        Welcome! This system uses <b>machine learning</b> to help you better understand 
+        your productivity patterns, burnout risk, and learning persona.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.write("")
+    
+    with st.expander("⚠️ Important Disclaimer"):
+        st.info("""
+        - This tool is **not a medical or psychological diagnosis**.  
+        - Results are generated based on patterns learned from student data.  
+        - Use insights as **guidance**, not absolute truth.  
+        - If you experience persistent stress or burnout, please consult a professional.
+        """)
+
+
+    st.markdown("""
+    ### 🌱 What You Can Do Here
+    - Discover your **student personality type**
+    - Understand your **burnout risk**
+    - Receive **actionable productivity suggestions**
+    - Explore global student behavior trends
+    """)
+
+    st.image(
+        "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200",
+        use_container_width=True
+    )
 
 # -----------------------------
 # 6. PAGE: PREDICTION & ANALYSIS (Optimized)
 # -----------------------------
 elif page == "📊 Prediction & Analysis":
-    st.header("🧠 Behavioral AI Diagnostics")
+    st.header("Behavioral Diagnostics")
     st.markdown("Please answer the following questions honestly to get an accurate productivity and burnout assessment.")
     
     # Use a form key to prevent re-submission on every interaction
@@ -100,42 +157,50 @@ elif page == "📊 Prediction & Analysis":
             gender = st.selectbox("What is your gender identity?", ["Male", "Female", "Other"], key="gender_input")
             
             st.subheader("🕒 Daily Habits")
-            work_hours = st.slider("On average, how many hours do you spend studying or working per day?", 
-                                  1.0, 16.0, 7.0, key="work_hours_slider")
-            sleep_hours = st.slider("How many hours of sleep did you get last night?", 
-                                  4.0, 12.0, 6.5, key="sleep_hours_slider")
+            work_hours = st.slider(
+                "On average, how many hours do you spend studying or working per day?",
+                1.0, 16.0, 7.0, step=0.5, key="work_hours_slider"
+            )
+            sleep_hours = st.slider(
+                "How many hours of sleep did you get last night?",
+                4.0, 12.0, 6.5, step=0.5, key="sleep_hours_slider"
+            )
             stress = st.slider("On a scale of 1-10, how 'stressed out' do you feel right now?", 
                               1, 10, 5, help="1 is totally relaxed, 10 is extremely overwhelmed.", 
                               key="stress_slider")
         
         with col2:
             st.subheader("📱 Digital Lifestyle")
-            social_media = st.slider("How much time do you spend on social media daily (hrs)?", 
-                                    0.0, 12.0, 3.0, key="social_media_slider")
-            offline_hrs = st.slider("In a week, how many hours do you spend completely 'unplugged' from devices?", 
-                                   0.0, 100.0, 12.0, key="offline_hrs_slider")
+            social_media = st.slider(
+                "How much time do you spend on social media daily (hrs)?",
+                0.0, 12.0, 3.0, step=0.5, key="social_media_slider"
+            )
+            offline_hrs = st.slider(
+                "In a week, how many hours do you spend completely 'unplugged'?",
+                0.0, 100.0, 12.0, step=0.5, key="offline_hrs_slider"
+            )
             breaks = st.number_input("How many intentional breaks do you take during your work sessions?", 
                                     0, 15, 2, key="breaks_input")
             
             st.subheader("🎯 Self-Assessment")
             workload_score = st.slider("Rate your current workload intensity (0-10):", 
-                                       0.0, 10.0, 5.0, help="0 is very light, 10 is maximum capacity.",
+                                       0.0, 10.0, 5.0,step = 0.5, help="0 is very light, 10 is maximum capacity.",
                                        key="workload_slider")
             sat_score_raw = st.slider("How satisfied are you with your current academic/work progress (0-10)?", 
-                                      0.0, 10.0, 6.0, key="satisfaction_slider")
+                                      0.0, 10.0, 6.0,step=0.5, key="satisfaction_slider")
             completion = st.slider("What percentage of your planned tasks did you actually finish today (0-10)?", 
-                                   0.0, 10.0, 6.0, help="Move to 10 if you finished everything you planned.",
+                                   0.0, 10.0, 6.0,step=0.5, help="Move to 10 if you finished everything you planned.",
                                    key="completion_slider")
             goal_rate = st.slider("How successful are you at meeting your long-term goals lately (0-10)?", 
-                                  0.0, 10.0, 5.0, key="goal_rate_slider")
+                                  0.0, 10.0, 5.0,step=0.5, key="goal_rate_slider")
         
         st.markdown("---")
-        submitted = st.form_submit_button("🔍 Generate My Analysis", type="primary")
+        submitted = st.form_submit_button("Generate Analysis", type="primary")
     
     # Only run heavy computation when form is submitted
     if submitted:
         # Add a spinner for user feedback
-        with st.spinner("🤖 AI is analyzing your patterns..."):
+        with st.spinner("🤖 Analyzing your patterns..."):
             # Create Dataframe
             df_input = pd.DataFrame({
                 "age": [age], "gender": [gender], "daily_social_media_time": [social_media],
@@ -188,19 +253,112 @@ elif page == "📊 Prediction & Analysis":
         st.divider()
         
         res1, res2, res3 = st.columns(3)
-        res1.metric("Calculated Productivity", f"{results['prod_score']:.2f}/10")
-        res2.metric("Your Student Persona", results['persona'])
+        res1.metric("Predicted Productivity", f"{results['prod_score']:.2f}/10")
+        res2.metric("Your Student Personality", results['persona'])
         res3.metric("Burnout Risk Level", results['burnout_label'])
 
+        persona_info = PERSONA_HELP.get(results['persona'])
+
+        if persona_info:
+            with st.expander("🧩 Your Characteristic"):
+                st.markdown(f"""
+                **{results['persona']}**
+
+                🧠 **Personality Pattern**  
+                {persona_info['desc']}
+
+                🚀 **How to Improve Productivity**  
+                {persona_info['tip']}
+                """)
+
         # Burnout Probability Breakdown
-        with st.expander("📊 Technical Breakdown: Burnout Risk Probabilities"):
-            st.write("This chart shows the probability assigned by the AI to each risk category based on your responses.")
-            prob_df = pd.DataFrame({
-                "Risk Level": burnout_le.classes_,
-                "Probability (%)": [p * 100 for p in results['burnout_probs']]
-            })
-            st.bar_chart(prob_df.set_index("Risk Level"))
-        
+        with st.expander("Burnout Risk Accuracy"):
+            risk_mapping = {
+                burnout_le.classes_[i]: results['burnout_probs'][i] * 100
+                for i in range(len(burnout_le.classes_))
+            }
+
+            selected_risk_value = risk_mapping[results['burnout_label']]
+            RISK_THEME = {
+                "Low": {
+                    "main": "#98fed0",
+                    "soft": "#cbf3f0",
+                    "glow": "rgba(46,196,182,0.35)"
+                },
+                "Medium": {
+                    "main": "#f6d685",
+                    "soft": "#fff3cd",
+                    "glow": "rgba(255,183,3,0.35)"
+                },
+                "High": {
+                    "main": "#f0868f",
+                    "soft": "#fdecea",
+                    "glow": "rgba(230,57,70,0.35)"
+                }
+            }
+
+            theme = RISK_THEME[results["burnout_label"]]
+
+
+
+            fig_gauge = go.Figure(go.Indicator(
+                mode="gauge+number",
+                value=selected_risk_value,
+                number={
+                    "suffix": "%",
+                    "font": {"size": 42, "color": theme["main"]}
+                },
+                title={
+                    "text": f"Burnout Risk · {results['burnout_label']}",
+                    "font": {"size": 22, "color": "#495057"}
+                },
+                gauge={
+                    "axis": {
+                        "range": [0, 100],
+                        "tickwidth": 0,
+                        "tickcolor": "rgba(0,0,0,0)"
+                    },
+
+                    # 🎯 Main needle/bar
+                    "bar": {
+                        "color": theme["main"],
+                        "thickness": 0.85
+                    },
+
+                    # 🌈 FAKE GRADIENT using soft layered zones
+                    "steps": [
+                        {"range": [0, 35], "color": "#befaef"},
+                        {"range": [35, 65], "color": "#f1daa7"},
+                        {"range": [65, 100], "color": "#edbcb7"},
+                    ],
+
+                    # ✨ Glow ring (premium effect)
+                    "threshold": {
+                        "line": {
+                            "color": theme["glow"],
+                            "width": 18
+                        },
+                        "thickness": 0.85,
+                        "value": selected_risk_value
+                    },
+
+                    "bgcolor": "#f8f9fa",
+                    "borderwidth": 0
+                }
+            ))
+
+            fig_gauge.update_layout(
+                height=380,
+                margin=dict(t=50, b=10, l=10, r=10),
+                paper_bgcolor="rgba(0,0,0,0)",
+                font=dict(family="Inter, Segoe UI, Arial")
+            )
+
+            st.plotly_chart(fig_gauge, use_container_width=True)
+
+
+
+
         st.info(get_recommendation(results['prod_score'], results['persona'], results['burnout_label']))
 
 # -----------------------------
@@ -208,44 +366,51 @@ elif page == "📊 Prediction & Analysis":
 # -----------------------------
 elif page == "📈 Global Insights":
     st.title("📈 Behavioral Dashboard (Global Insights)")
-    
+    PASTEL_PERSONA_COLORS = {
+        "Zen Masters": "#cdb4db",
+        "Grinders": "#ffc8dd",
+        "Overwhelmed": "#ecffaf",
+        "Burnout Risk": "#eecc98",
+        "Coasters": "#bde0fe",
+        "Restless Sleepers": "#d1f9c5"
+    }
+
     # Cache expensive chart computations
     @st.cache_data(ttl=3600)  # Cache for 1 hour
     def create_persona_charts(df_filtered, radar_features, radar_labels):
         """Create and cache dashboard charts"""
-        # Persona Distribution
-        persona_dist = (
-            df_global['StudentType']
-            .value_counts(normalize=True)
-            .reset_index()
+        df_sunburst = df_filtered.copy()
+        # Decode gender
+        gender_map = {
+            0: "Male",
+            1: "Female"
+        }
+
+        df_sunburst["gender"] = (
+            df_sunburst["gender"]
+            .map(gender_map)
+            .fillna("Unknown")
         )
-        persona_dist.columns = ['StudentType', 'Percentage']
-        persona_dist['Percentage'] *= 100
+
+        fig_persona = px.sunburst(
+            df_sunburst,
+            path=["StudentType", "gender"],
+            color="StudentType",
+            color_discrete_map=PASTEL_PERSONA_COLORS,
+            title="🧑‍🎓 Student Persona Distribution"
+        )
+
+        fig_persona.update_traces(
+            hovertemplate="<b>%{label}</b><br>Count: %{value}",
+            marker=dict(line=dict(color="white", width=2))
+        )
+
+        fig_persona.update_layout(
+            margin=dict(t=50, l=10, r=10, b=10),
+            height=480
+        )
         
-        fig_pie = px.pie(
-            persona_dist,
-            names='StudentType',
-            values='Percentage',
-            hole=0.55,
-            title="🧑‍🎓 Student Persona Distribution (%)"
-        )
-        
-        # Coffee Consumption
-        coffee_df = (
-            df_filtered
-            .groupby('StudentType')['coffee_consumption_per_day']
-            .mean()
-            .reset_index()
-        )
-        
-        fig_coffee = px.bar(
-            coffee_df,
-            x='coffee_consumption_per_day',
-            y='StudentType',
-            orientation='h',
-            text_auto='.2f',
-            title="☕ Avg Coffee Consumption by Persona"
-        )
+
         
         # Radar Chart
         radar_df = (
@@ -276,19 +441,19 @@ elif page == "📈 Global Insights":
             showlegend=True
         )
         
-        return fig_pie, fig_coffee, fig_radar
+        return fig_persona, fig_radar
     
     # Persona Filter
     persona_filter = st.multiselect(
         "Select Personas to Compare",
         options=df_global['StudentType'].unique(),
-        default=["Grinders", "Zen Masters", "Overwhelmed"]
+        default=["Grinders","Coasters","Zen Masters","Potential Burnout Risk","Overwhelmed","Restless Sleepers"]
     )
     
     df_filtered = df_global[df_global['StudentType'].isin(persona_filter)]
     
     # KPI ROW (Lightweight)
-    st.subheader("📊 Persona-Level Summary")
+    st.subheader("Persona-Level Summary")
     k1, k2, k3, k4, k5 = st.columns(5)
     
     with k1:
@@ -323,15 +488,13 @@ elif page == "📈 Global Insights":
         'Social Media Usage'
     ]
     
-    fig_pie, fig_coffee, fig_radar = create_persona_charts(df_filtered, radar_features, radar_labels)
+    fig_pie, fig_radar = create_persona_charts(df_filtered, radar_features, radar_labels)
     
-    # ROW 1 — DISTRIBUTION + COFFEE
+    # ROW 1 — DISTRIBUTION
     c1, c2 = st.columns(2)
     with c1:
         st.plotly_chart(fig_pie, use_container_width=True)
-    with c2:
-        st.plotly_chart(fig_coffee, use_container_width=True)
-    
+   
     st.divider()
     
     # RADAR CHART
@@ -340,33 +503,35 @@ elif page == "📈 Global Insights":
     
     st.divider()
     
-    # ROW 2 — STRESS + SLEEP (Cached)
-    c3, c4 = st.columns(2)
-    
-    with st.spinner("Generating visualizations..."):
-        fig_scatter = px.scatter(
-            df_filtered,
-            x='stress_level',
-            y='actual_productivity_score',
-            color='StudentType',
-            hover_data=['sleep_hours', 'job_satisfaction_score'],
-            title="📉 Stress vs Productivity"
-        )
-        
-        fig_box = px.box(
-            df_filtered,
-            x='StudentType',
-            y='sleep_hours',
-            color='StudentType',
-            title="😴 Sleep Distribution by Persona"
-        )
-        
-        with c3:
-            st.plotly_chart(fig_scatter, use_container_width=True)
-        with c4:
-            st.plotly_chart(fig_box, use_container_width=True)
-    
-    st.divider()
+    rank_df = (
+        df_filtered
+        .groupby("StudentType")[["stress_level", "actual_productivity_score"]]
+        .mean()
+        .reset_index()
+    )
+
+    fig_rank = px.bar(
+        rank_df.melt(id_vars="StudentType"),
+        x="value",
+        y="StudentType",
+        color="variable",
+        orientation="h",
+        barmode="group",
+        title="Persona Ranking: Stress vs Productivity",
+        color_discrete_map={
+            "stress_level": "#f6c2cc",
+            "actual_productivity_score": "#c1f6bf"
+        }
+    )
+
+    fig_rank.update_layout(
+        xaxis_title="Average Score",
+        yaxis_title="",
+        legend_title=""
+    )
+
+    st.plotly_chart(fig_rank, use_container_width=True)
+
 
 # -----------------------------
 # 8. PAGE: SCHEDULER (Optimized)
@@ -387,8 +552,7 @@ elif page == "📅 AI Smart Scheduler":
         st.session_state.prev_persona_scheduler = current_persona
         st.warning(f"Persona changed to {current_persona}. Schedule cleared to apply new logic.")
     
-    # Task Management
-    with st.expander("➕ Add New Task", expanded=True if not st.session_state.tasks else False):
+    with st.expander("Add New Task", expanded=True if not st.session_state.tasks else False):
         t_name = st.text_input("Task Description", key="task_name")
         t_dur = st.number_input("Duration (hrs)", 0.5, 8.0, 1.0, 0.5, key="task_duration")
         t_prio = st.selectbox("Priority", ["High", "Medium", "Low"], key="task_priority")
@@ -399,20 +563,18 @@ elif page == "📅 AI Smart Scheduler":
                 st.session_state.tasks.append({"Task": t_name, "Duration": t_dur, "Priority": t_prio})
                 st.rerun()
     
-    # Display and Edit Tasks
     if st.session_state.tasks:
         st.subheader("Current Task List")
         
-        # Use a form for task editing to prevent constant re-runs
         with st.form("task_editor_form"):
             edited_tasks = st.data_editor(st.session_state.tasks, num_rows="dynamic", 
                                           key="task_editor", use_container_width=True)
             
             col_save, col_clear = st.columns(2)
             with col_save:
-                save_changes = st.form_submit_button("💾 Save Changes", type="primary")
+                save_changes = st.form_submit_button("💾 Save Changes",type = "primary")
             with col_clear:
-                if st.form_submit_button("🗑️ Clear All Tasks"):
+                if st.form_submit_button("Clear All Tasks"):
                     st.session_state.tasks = []
                     st.rerun()
             
@@ -422,7 +584,7 @@ elif page == "📅 AI Smart Scheduler":
                 st.rerun()
         
         # Generate Schedule Button (only shown if tasks exist)
-        if st.button("🚀 Generate AI Timeline", type="primary", key="generate_schedule"):
+        if st.button("Generate Timeline", type="primary", key="generate_schedule"):
             start_time = datetime.strptime("09:00", "%H:%M")
             schedule_list = []
             
@@ -461,11 +623,10 @@ elif page == "📅 AI Smart Scheduler":
                 })
                 start_time = break_end
             
-            # Display Schedule
+            
             st.subheader("📅 Generated Schedule")
             st.table(schedule_list)
             
-            # Export
             output = io.BytesIO()
             pd.DataFrame(schedule_list).to_excel(output, index=False)
             st.download_button("📥 Export to Excel", data=output.getvalue(), 
